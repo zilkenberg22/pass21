@@ -36,7 +36,7 @@ const menu = [
     ),
     name: "Logins",
     count: 0,
-    href: "#",
+    href: "/logins",
   },
   {
     icon: (
@@ -124,6 +124,7 @@ export default function Sidebar() {
         {menu.map((x, i) => (
           <Link href={x.href}>
             <div
+              key={i}
               className={`flex py-2 px-4 justify-between rounded-lg mb-2 ${
                 selectedMenu === i ? "bg-[#feeb29]" : "bg-white"
               } ${selectedMenu !== i && "hover:bg-[#ffffff99]"}`}
