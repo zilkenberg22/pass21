@@ -1,11 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LoginsForm from "@/components/LoginsForm";
 import PlusButton from "@/components/PlusButton";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { Popover } from "antd";
+import CryptoJS from "crypto-js";
 
 export default function LoginsPage() {
   const [showForm, setShowForm] = useState(false);
   const [showPassword, setShowPassword] = useState(null);
   const [editData, setEditData] = useState(null);
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  const [loginsData, setLoginsData] = useState([]);
+
+  useEffect(() => {
+    if (session) {
+      getLogins();
+    } else {
+      router.push("/");
+    }
+  }, [session]);
 
   function addLogins() {
     setShowForm(true);
@@ -13,11 +29,41 @@ export default function LoginsPage() {
 
   function back() {
     setShowForm(false);
+    getLogins();
   }
 
   function edit(data) {
     setEditData(data);
     setShowForm(true);
+  }
+
+  async function getLogins() {
+    try {
+      const options = {
+        method: "GET",
+        headers: { Authorization: `Bearer ${session?.user?._id}` },
+      };
+
+      await fetch("/api/logins", options)
+        .then((res) => res.json())
+        .then((data) => {
+          setLoginsData([...data.data]);
+        });
+    } catch (error) {
+      console.log(error, "error");
+    }
+  }
+
+  function showPasswordComp(password) {
+    try {
+      var a = CryptoJS.AES.decrypt(
+        password,
+        "$2a$12$0Kw5ON5DdJy3qPzKwnX9lO1zjKxus3qUfZ6Itpwb6U8zNIXj33nN2"
+      );
+      const decryptedValue = a.toString(CryptoJS.enc.Utf8);
+    } catch (error) {
+      console.log(error, "error");
+    }
   }
 
   return (
@@ -55,9 +101,9 @@ export default function LoginsPage() {
               </div>
               <div className="w-[24%]">Username</div>
               <div className="w-[24%]">Password</div>
-              <div className="w-[24%]">asd</div>
+              <div className="w-[24%]"></div>
             </div>
-            {[{}, {}].map((x, i) => (
+            {loginsData.map((x, i) => (
               <div
                 className={`group flex items-center p-2 gap-x-3 cursor-pointer group hover:bg-[#e8f4e4] ${
                   i !== 1 ? "border-b" : "border-b-0"
@@ -67,9 +113,9 @@ export default function LoginsPage() {
                 <div className="w-[4%]">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="32"
-                    height="32"
-                    viewBox="0 0 32 32"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
                   >
                     <path
                       fill="currentColor"
@@ -82,30 +128,42 @@ export default function LoginsPage() {
                     <div className="rounded-full border bg-[#f4f1ed] font-bold h-[32px] w-[32px] flex items-center justify-center">
                       Wb
                     </div>
-                    <span>Website</span>
+                    <span>{x.website}</span>
                   </div>
-                  <button className="hidden group-hover:flex">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="32"
-                      height="32"
-                      viewBox="0 0 32 32"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="M12 21v-2h7V5h-7V3h7q.825 0 1.413.588T21 5v14q0 .825-.588 1.413T19 21h-7Zm-2-4l-1.375-1.45l2.55-2.55H3v-2h8.175l-2.55-2.55L10 7l5 5l-5 5Z"
-                      />
-                    </svg>
+                  <button
+                    className="hidden group-hover:flex mt-[2px]"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    <a href={x.url} target="_blank" rel="noopener noreferrer">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="currentColor"
+                          d="M12 21v-2h7V5h-7V3h7q.825 0 1.413.588T21 5v14q0 .825-.588 1.413T19 21h-7Zm-2-4l-1.375-1.45l2.55-2.55H3v-2h8.175l-2.55-2.55L10 7l5 5l-5 5Z"
+                        />
+                      </svg>
+                    </a>
                   </button>
                 </div>
                 <div className="w-[24%] flex items-center justify-between">
-                  <span>Username</span>
-                  <button className="hidden group-hover:flex">
+                  <span>{x.username}</span>
+                  <button
+                    className="hidden group-hover:flex"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="32"
-                      height="32"
-                      viewBox="0 0 32 32"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
                     >
                       <path
                         fill="currentColor"
@@ -117,45 +175,67 @@ export default function LoginsPage() {
                 <div className="w-[24%] flex items-center justify-between">
                   <div className="flex items-center justify-between">
                     <span>••••••</span>
-                    {showPassword !== i ? (
-                      <button className="" onClick={() => setShowPassword(i)}>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="32"
-                          height="32"
-                          viewBox="0 0 32 32"
+                    <Popover
+                      content={showPasswordComp(x.password)}
+                      trigger="focus"
+                    >
+                      {showPassword !== i ? (
+                        <button
+                          className=""
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setShowPassword(i);
+                          }}
                         >
-                          <path
-                            fill="currentColor"
-                            d="M12 9a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m0-4.5c5 0 9.27 3.11 11 7.5c-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0 0 17.64 0a9.821 9.821 0 0 0-17.64 0Z"
-                          />
-                        </svg>
-                      </button>
-                    ) : (
-                      <button
-                        className=""
-                        onClick={() => setShowPassword(null)}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="32"
-                          height="32"
-                          viewBox="0 0 32 32"
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              fill="currentColor"
+                              d="M12 9a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m0-4.5c5 0 9.27 3.11 11 7.5c-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0 0 17.64 0a9.821 9.821 0 0 0-17.64 0Z"
+                            />
+                          </svg>
+                        </button>
+                      ) : (
+                        <button
+                          className=""
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setShowPassword(null);
+                          }}
                         >
-                          <path
-                            fill="currentColor"
-                            d="M2 5.27L3.28 4L20 20.72L18.73 22l-3.08-3.08c-1.15.38-2.37.58-3.65.58c-5 0-9.27-3.11-11-7.5c.69-1.76 1.79-3.31 3.19-4.54L2 5.27M12 9a3 3 0 0 1 3 3a3 3 0 0 1-.17 1L11 9.17A3 3 0 0 1 12 9m0-4.5c5 0 9.27 3.11 11 7.5a11.79 11.79 0 0 1-4 5.19l-1.42-1.43A9.862 9.862 0 0 0 20.82 12A9.821 9.821 0 0 0 12 6.5c-1.09 0-2.16.18-3.16.5L7.3 5.47c1.44-.62 3.03-.97 4.7-.97M3.18 12A9.821 9.821 0 0 0 12 17.5c.69 0 1.37-.07 2-.21L11.72 15A3.064 3.064 0 0 1 9 12.28L5.6 8.87c-.99.85-1.82 1.91-2.42 3.13Z"
-                          />
-                        </svg>
-                      </button>
-                    )}
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              fill="currentColor"
+                              d="M2 5.27L3.28 4L20 20.72L18.73 22l-3.08-3.08c-1.15.38-2.37.58-3.65.58c-5 0-9.27-3.11-11-7.5c.69-1.76 1.79-3.31 3.19-4.54L2 5.27M12 9a3 3 0 0 1 3 3a3 3 0 0 1-.17 1L11 9.17A3 3 0 0 1 12 9m0-4.5c5 0 9.27 3.11 11 7.5a11.79 11.79 0 0 1-4 5.19l-1.42-1.43A9.862 9.862 0 0 0 20.82 12A9.821 9.821 0 0 0 12 6.5c-1.09 0-2.16.18-3.16.5L7.3 5.47c1.44-.62 3.03-.97 4.7-.97M3.18 12A9.821 9.821 0 0 0 12 17.5c.69 0 1.37-.07 2-.21L11.72 15A3.064 3.064 0 0 1 9 12.28L5.6 8.87c-.99.85-1.82 1.91-2.42 3.13Z"
+                            />
+                          </svg>
+                        </button>
+                      )}
+                    </Popover>
                   </div>
-                  <button className="hidden group-hover:flex">
+                  <button
+                    className="hidden group-hover:flex mt-[4px]"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                  >
                     <svg
                       class="sc-hLBbgP gGYheL sc-fSKiAx"
-                      width="32"
-                      height="32"
-                      viewBox="0 0 32 32"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
                     >
                       <g>
                         <path
@@ -175,12 +255,18 @@ export default function LoginsPage() {
                   </button>
                 </div>
                 <div className="w-[24%] flex items-center justify-around">
-                  <button className="hidden group-hover:flex">
+                  <button
+                    className="hidden group-hover:flex"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="32"
-                      height="32"
-                      viewBox="0 0 32 32"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
                     >
                       <path
                         fill="currentColor"
@@ -188,12 +274,18 @@ export default function LoginsPage() {
                       />
                     </svg>
                   </button>
-                  <button className="hidden group-hover:flex">
+                  <button
+                    className="hidden group-hover:flex"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="32"
-                      height="32"
-                      viewBox="0 0 32 32"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
                     >
                       <path
                         fill="currentColor"
@@ -201,12 +293,18 @@ export default function LoginsPage() {
                       />
                     </svg>
                   </button>
-                  <button className="w-full flex justify-end">
+                  <button
+                    className="w-full flex justify-end"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="32"
-                      height="32"
-                      viewBox="0 0 32 32"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
                     >
                       <path
                         fill="currentColor"

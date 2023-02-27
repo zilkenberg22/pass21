@@ -14,20 +14,22 @@ const loginsSchema = new mongoose.Schema({
   },
   url: {
     type: String,
+    required: false,
     validate: {
       validator: function (value) {
         const regex = /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(\/[^\s]*)?$/;
-        return regex.test(value);
+        return value === "" || regex.test(value);
       },
       message: "Invalid url",
     },
   },
   username: {
     type: String,
+    required: false,
     validate: {
       validator: function (value) {
         const regex = /^[a-zA-Z0-9_-]{3,16}$/;
-        return regex.test(value);
+        return value === "" || regex.test(value);
       },
       message: "Invalid username",
     },
@@ -49,20 +51,22 @@ const loginsSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
+    required: false,
     validate: {
       validator: function (value) {
         const regex = /^\d{8}$/;
-        return regex.test(value);
+        return value === "" || regex.test(value);
       },
       message: "Invalid phone",
     },
   },
   notes: {
     type: String,
+    required: false,
     validate: {
       validator: function (value) {
         const regex = /^(?!\s*$).+/;
-        return regex.test(value);
+        return value === "" || regex.test(value);
       },
       message: "Invalid notes",
     },

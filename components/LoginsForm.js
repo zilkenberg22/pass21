@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Form, Input } from "antd";
 import { useFormik } from "formik";
 import { loginsForm_validate } from "@/lib/validate";
 import { useSession } from "next-auth/react";
@@ -14,25 +14,27 @@ export default function LoginsForm({ back, editData }) {
   const [formData, setFormData] = useState({});
 
   const formik = useFormik({
-    initialValues: {
-      website: "",
-      url: "",
-      email: "",
-      username: "",
-      password: "",
-      phone: "",
-      notes: "",
-    },
+    initialValues: { ...formData },
     validate: loginsForm_validate,
     onSubmit,
   });
 
   useEffect(() => {
     if (editData !== null) {
-      setEdit(true);
       setFormData({ ...editData });
+      setEdit(true);
+      formik.initialValues = { ...editData };
+      formik.setValues({ ...editData });
     }
-  }, [editData]);
+  }, []);
+
+  function cancel() {
+    setEdit(false);
+    setFormData({});
+    back();
+  }
+
+  console.log(formik, "formik");
 
   async function onSubmit(values) {
     try {
@@ -59,7 +61,7 @@ export default function LoginsForm({ back, editData }) {
               title: "Амжилттай",
               message: data.message,
             });
-            router.push("/auth/login");
+            back();
           }
         });
     } catch (error) {
@@ -75,7 +77,7 @@ export default function LoginsForm({ back, editData }) {
     <div>
       <div className="flex justify-between items-center">
         <div className="flex gap-3 items-center">
-          <button onClick={() => back()}>
+          <button onClick={() => cancel()}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -95,7 +97,7 @@ export default function LoginsForm({ back, editData }) {
         <div className="flex gap-3">
           <div
             className="cursor-pointer rounded-3xl px-4 text-base leading-9 min-w-[120px] flex justify-center border-[3px] border-[#242424] hover:bg-[#242424] hover:text-[white]"
-            onClick={() => back()}
+            onClick={() => cancel()}
           >
             <strong>Cancel</strong>
           </div>

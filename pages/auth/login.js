@@ -26,7 +26,6 @@ export default function Login() {
   }
 
   async function onSubmit(values) {
-    console.log(values, "values");
     const status = await signIn("credentials", {
       redirect: false,
       email: values.email,

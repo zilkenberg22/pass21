@@ -9,7 +9,6 @@ export default function Layout({ children }) {
   let maxHeight = getChildrenHeight();
   const { data: session } = useSession();
 
-  console.log(session, "session--LAYOUT");
   return (
     <div>
       <Head>
