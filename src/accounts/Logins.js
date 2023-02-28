@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { Popover } from "antd";
-import CryptoJS from "crypto-js";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import LoginsForm from "@/components/LoginsForm";
 import PlusButton from "@/components/PlusButton";
+import { openNotification } from "@/lib/tools";
 
 export default function LoginsPage() {
+  const router = useRouter();
+  const { data: session } = useSession();
   const [showForm, setShowForm] = useState(false);
   const [showPassword, setShowPassword] = useState(null);
-  const [editData, setEditData] = useState(null);
-  const { data: session } = useSession();
-  const router = useRouter();
 
+  const [editData, setEditData] = useState(null);
   const [loginsData, setLoginsData] = useState([]);
 
   useEffect(() => {
@@ -30,11 +30,24 @@ export default function LoginsPage() {
   function back() {
     setShowForm(false);
     getLogins();
+    setShowPassword(null);
   }
 
-  function edit(data) {
-    setEditData(data);
-    setShowForm(true);
+  async function edit(data) {
+    try {
+      const options = {
+        method: "GET",
+      };
+
+      await fetch(`/api/logins/${data._id}`, options)
+        .then((res) => res.json())
+        .then((json) => {
+          setEditData({ ...json.data });
+          setShowForm(true);
+        });
+    } catch (error) {
+      console.log(error, "error");
+    }
   }
 
   async function getLogins() {
@@ -55,12 +68,92 @@ export default function LoginsPage() {
   }
 
   function showPasswordComp(password) {
+    const [depass, setDepass] = useState(null);
+
+    useEffect(() => {
+      async function fetchData() {
+        try {
+          const options = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: password }),
+          };
+
+          const response = await fetch("/api/decryptPassword", options);
+          const data = await response.json();
+          setDepass(data.user);
+        } catch (error) {
+          console.log(error, "error");
+        }
+      }
+
+      fetchData();
+    }, [password]);
+
+    return depass !== null ? <div>{depass}</div> : <div>Loading...</div>;
+  }
+
+  async function copyPassword(password) {
     try {
-      var a = CryptoJS.AES.decrypt(
-        password,
-        "$2a$12$0Kw5ON5DdJy3qPzKwnX9lO1zjKxus3qUfZ6Itpwb6U8zNIXj33nN2"
-      );
-      const decryptedValue = a.toString(CryptoJS.enc.Utf8);
+      const options = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: password }),
+      };
+
+      const response = await fetch("/api/decryptPassword", options);
+      const data = await response.json();
+      navigator.clipboard.writeText(data.user);
+    } catch (error) {
+      console.log(error, "error");
+    }
+  }
+
+  function actions(data) {
+    return (
+      <div className="w-32 cursor-pointer">
+        <div
+          className="border-b p-1"
+          onClick={(e) => {
+            e.stopPropagation();
+            edit(data);
+          }}
+        >
+          Edit
+        </div>
+        <div
+          className="p-1"
+          onClick={(e) => {
+            e.stopPropagation();
+            deleteLogin(data);
+          }}
+        >
+          Delete
+        </div>
+      </div>
+    );
+  }
+
+  async function deleteLogin(data) {
+    try {
+      const options = {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      };
+
+      await fetch(`/api/logins/${data._id}`, options)
+        .then((res) => res.json())
+        .then((json) => {
+          console.log(json, "json");
+          if (json.status) {
+            openNotification({
+              type: "success",
+              title: "Мэдээллийг устгалаа",
+            });
+            getLogins();
+          }
+        });
     } catch (error) {
       console.log(error, "error");
     }
@@ -108,7 +201,10 @@ export default function LoginsPage() {
                 className={`group flex items-center p-2 gap-x-3 cursor-pointer group hover:bg-[#e8f4e4] ${
                   i !== 1 ? "border-b" : "border-b-0"
                 }`}
-                onClick={() => edit(x)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  edit(x);
+                }}
               >
                 <div className="w-[4%]">
                   <svg
@@ -126,7 +222,7 @@ export default function LoginsPage() {
                 <div className="w-[24%] flex items-center justify-between">
                   <div className="flex items-center">
                     <div className="rounded-full border bg-[#f4f1ed] font-bold h-[32px] w-[32px] flex items-center justify-center">
-                      Wb
+                      {x.website.slice(0, 2)}
                     </div>
                     <span>{x.website}</span>
                   </div>
@@ -176,14 +272,14 @@ export default function LoginsPage() {
                   <div className="flex items-center justify-between">
                     <span>••••••</span>
                     <Popover
-                      content={showPasswordComp(x.password)}
-                      trigger="focus"
+                      content={() => showPasswordComp(x.password)}
+                      trigger="click"
+                      open={showPassword === i}
                     >
                       {showPassword !== i ? (
                         <button
                           className=""
                           onClick={(e) => {
-                            e.preventDefault();
                             e.stopPropagation();
                             setShowPassword(i);
                           }}
@@ -229,6 +325,7 @@ export default function LoginsPage() {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
+                      copyPassword(x.password);
                     }}
                   >
                     <svg
@@ -255,63 +352,31 @@ export default function LoginsPage() {
                   </button>
                 </div>
                 <div className="w-[24%] flex items-center justify-around">
-                  <button
-                    className="hidden group-hover:flex"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
+                  <Popover
+                    content={() => actions(x)}
+                    trigger="click"
+                    placement="bottomRight"
+                    autoAdjustOverflow
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
+                    <button
+                      className="w-full flex justify-end"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
                     >
-                      <path
-                        fill="currentColor"
-                        d="M5 19h1.4l8.625-8.625l-1.4-1.4L5 17.6V19ZM19.3 8.925l-4.25-4.2l1.4-1.4q.575-.575 1.413-.575t1.412.575l1.4 1.4q.575.575.6 1.388t-.55 1.387L19.3 8.925ZM17.85 10.4L7.25 21H3v-4.25l10.6-10.6l4.25 4.25Zm-3.525-.725l-.7-.7l1.4 1.4l-.7-.7Z"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    className="hidden group-hover:flex"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4z"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    className="w-full flex justify-end"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2z"
-                      />
-                    </svg>
-                  </button>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="currentColor"
+                          d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2z"
+                        />
+                      </svg>
+                    </button>
+                  </Popover>
                 </div>
               </div>
             ))}

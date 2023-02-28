@@ -22,9 +22,13 @@ export default function LoginsForm({ back, editData }) {
       setEdit(true);
       formik.setValues({ ...editData });
     }
-  }, []);
+  }, [editData]);
 
-  async function onSubmit(values) {
+  function onSubmit(values) {
+    edit ? editLogin(values) : newLogin(values);
+  }
+
+  async function newLogin(values) {
     try {
       values.user = session?.user?._id;
       const options = {
@@ -48,6 +52,38 @@ export default function LoginsForm({ back, editData }) {
               type: "success",
               title: "Амжилттай",
               message: data.message,
+            });
+            back();
+          }
+        });
+    } catch (error) {
+      console.log(error, "error");
+    }
+  }
+
+  async function editLogin(values) {
+    try {
+      const options = {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      };
+
+      await fetch(`/api/logins/${editData._id}`, options)
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.message) {
+            openNotification({
+              type: "error",
+              title: "Алдаа",
+              message: json.message,
+            });
+          }
+          if (json.status) {
+            openNotification({
+              type: "success",
+              title: "Амжилттай",
+              message: json.message,
             });
             back();
           }
