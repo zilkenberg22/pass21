@@ -16,7 +16,7 @@ export default async function handler(req, res) {
       }
       break;
     case "POST":
-      {
+      try {
         if (!req.body)
           return res.status(404).json({ error: "Don't have form data...!" });
         const { website, url, email, username, password, phone, notes, user } =
@@ -42,6 +42,8 @@ export default async function handler(req, res) {
             });
           }
         );
+      } catch (error) {
+        console.log(error, "error");
       }
       break;
     default:

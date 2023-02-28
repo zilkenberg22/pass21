@@ -12,7 +12,15 @@ export default function LoginsForm({ back, editData }) {
   const [showPassword, setShowPassword] = useState(false);
 
   const formik = useFormik({
-    initialValues: {},
+    initialValues: {
+      website: "",
+      url: "",
+      email: "",
+      username: "",
+      password: "",
+      phone: "",
+      notes: "",
+    },
     validate: loginsForm_validate,
     onSubmit,
   });
@@ -40,13 +48,6 @@ export default function LoginsForm({ back, editData }) {
       await fetch("/api/logins", options)
         .then((res) => res.json())
         .then((data) => {
-          if (data.message) {
-            openNotification({
-              type: "error",
-              title: "Алдаа",
-              message: data.message,
-            });
-          }
           if (data.status) {
             openNotification({
               type: "success",
@@ -54,6 +55,12 @@ export default function LoginsForm({ back, editData }) {
               message: data.message,
             });
             back();
+          } else if (data.message) {
+            openNotification({
+              type: "error",
+              title: "Алдаа",
+              message: data.message,
+            });
           }
         });
     } catch (error) {
@@ -129,7 +136,7 @@ export default function LoginsForm({ back, editData }) {
           </div>
           <button
             form="loginsForm"
-            htmlType="submit"
+            type="submit"
             className="cursor-pointer rounded-3xl bg-[#feeb29] hover:bg-[#fff488] px-4 text-base leading-9 min-w-[120px] flex justify-center border-[3px] border-[#242424]"
           >
             <strong>Save</strong>

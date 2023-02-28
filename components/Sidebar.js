@@ -112,7 +112,7 @@ const menu = [
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar(props) {
   const [selectedMenu, setSelectedMenu] = useState(1);
 
   return (
@@ -122,7 +122,7 @@ export default function Sidebar() {
       </div>
       <div className="p-4">
         {menu.map((x, i) => (
-          <Link href={x.href}>
+          <Link href={x.href} key={`${i}side`}>
             <div
               key={i}
               className={`flex py-2 px-4 justify-between rounded-lg mb-2 ${
