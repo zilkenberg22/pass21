@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useSession } from "next-auth/react";
+import { Modal, Slider } from "antd";
 import { loginsForm_validate } from "@/lib/validate";
-import { openNotification } from "@/lib/tools";
+import { generatePassword, openNotification } from "@/lib/tools";
 
 export default function LoginsForm({ back, editData }) {
   const { data: session } = useSession();
@@ -10,6 +11,9 @@ export default function LoginsForm({ back, editData }) {
   const [edit, setEdit] = useState(false);
   const [formData, setFormData] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [showGenerater, setShowGenerater] = useState(false);
+  const [slideLength, setSlideLength] = useState(12);
+  const [generatedPassword, setGeneratedPassword] = useState("");
 
   const formik = useFormik({
     initialValues: {
@@ -104,6 +108,17 @@ export default function LoginsForm({ back, editData }) {
     setEdit(false);
     setFormData({});
     back();
+  }
+
+  function generateNewPassword(e) {
+    let length = e ? e : slideLength;
+    var password = generatePassword(length);
+    setGeneratedPassword(password);
+  }
+
+  function changePassword() {
+    formik.values.password = generatedPassword;
+    setShowGenerater(false);
   }
 
   return (
@@ -230,13 +245,28 @@ export default function LoginsForm({ back, editData }) {
                 }`}
                 {...formik.getFieldProps("password")}
               />
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  className="w-[16px] h-[16px]"
-                  onClick={() => setShowPassword(!showPassword)}
-                />
-                <span>Show Password</span>
+              <div className="flex gap-6">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    className="w-[16px] h-[16px]"
+                    checked={showPassword}
+                    onClick={() => setShowPassword(!showPassword)}
+                  />
+                  <span>Show Password</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    className="w-[16px] h-[16px]"
+                    checked={showGenerater}
+                    onClick={() => {
+                      generateNewPassword();
+                      setShowGenerater(true);
+                    }}
+                  />
+                  <span>Generate Password</span>
+                </div>
               </div>
             </div>
           </div>
@@ -305,6 +335,60 @@ export default function LoginsForm({ back, editData }) {
           </div>
         </form>
       </div>
+      <Modal
+        width={800}
+        open={showGenerater}
+        closable={false}
+        centered
+        okText="Change Password"
+        onOk={changePassword}
+        onCancel={() => setShowGenerater(false)}
+        okButtonProps={() => <button>ok</button>}
+      >
+        <div className="w-full">
+          <h2 className="font-semibold text-3xl flex justify-center mb-10">
+            Create strong passwords with Password Generator
+          </h2>
+          <div className="flex w-full items-center gap-5 justify-center bg-green-300 ">
+            <div className="border-none focus:outline-none w-3/5 py-6 text-4xl text-white tracking-wider bg-green-300">
+              {generatedPassword}
+            </div>
+            <button onClick={() => generateNewPassword()}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="30"
+                height="30"
+                viewBox="0 0 16 16"
+                className="text-white"
+              >
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M4.75 10.75h-3m12.5-2c0 3-2.798 5.5-6.25 5.5c-3.75 0-6.25-3.5-6.25-3.5v3.5m9.5-9h3m-12.5 2c0-3 2.798-5.5 6.25-5.5c3.75 0 6.25 3.5 6.25 3.5v-3.5"
+                />
+              </svg>
+            </button>
+            <button
+              className="bg-yellow-500 text-white p-2 px-4 text-xl"
+              onClick={() => navigator.clipboard.writeText(generatedPassword)}
+            >
+              Copy Password
+            </button>
+          </div>
+          <Slider
+            min={12}
+            max={20}
+            value={slideLength}
+            onChange={(e) => {
+              setSlideLength(e);
+              generateNewPassword(e);
+            }}
+          />
+        </div>
+      </Modal>
     </div>
   );
 }

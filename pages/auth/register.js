@@ -40,13 +40,6 @@ export default function Register() {
       await fetch("/api/auth/signup", options)
         .then((res) => res.json())
         .then((data) => {
-          if (data.message) {
-            openNotification({
-              type: "error",
-              title: "Алдаа",
-              message: data.message,
-            });
-          }
           if (data.status) {
             openNotification({
               type: "success",
@@ -54,6 +47,12 @@ export default function Register() {
               message: data.message,
             });
             router.push("/auth/login");
+          } else if (data.message) {
+            openNotification({
+              type: "error",
+              title: "Алдаа",
+              message: data.message,
+            });
           }
         });
     } catch (error) {
