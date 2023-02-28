@@ -1,8 +1,8 @@
 import React from "react";
 import Head from "next/head";
-import Navbar from "./Navbar";
-import { getChildrenHeight } from "@/lib/tools";
 import { useSession } from "next-auth/react";
+import { getChildrenHeight } from "@/lib/tools";
+import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 
 export default function Layout({ children }) {

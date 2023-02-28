@@ -1,5 +1,5 @@
 import connectMongo from "@/lib/dbConnect";
-import { decrypt, encrypt } from "@/lib/tools";
+import { encrypt } from "@/lib/tools";
 import Logins from "@/models/LoginsModel";
 
 export default async function handler(req, res) {

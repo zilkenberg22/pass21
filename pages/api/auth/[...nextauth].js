@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import connectMongo from "@/lib/dbConnect";
-import Users from "@/models/UserModel";
 import { decrypt } from "@/lib/tools";
+import Users from "@/models/UserModel";
 
 export default NextAuth({
   providers: [

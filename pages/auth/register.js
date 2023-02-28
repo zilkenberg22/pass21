@@ -1,14 +1,24 @@
-import React from "react";
-import { Form, Input, Button } from "antd";
+import React, { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/router";
 import { useFormik } from "formik";
+import { useSession } from "next-auth/react";
 import { register_validate } from "@/lib/validate";
 import { openNotification } from "@/lib/tools";
-import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
 
 export default function Register() {
   const router = useRouter();
   const { data: session } = useSession();
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    cpassword: false,
+  });
+
+  if (session) {
+    router.push("/");
+  }
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -18,10 +28,6 @@ export default function Register() {
     validate: register_validate,
     onSubmit,
   });
-
-  if (session) {
-    router.push("/");
-  }
 
   async function onSubmit(values) {
     try {
@@ -55,73 +61,135 @@ export default function Register() {
     }
   }
 
-  function onFinishFailed() {}
-
   return (
-    <div className="h-screen w-full flex justify-center items-center">
-      <Form
-        name="registerForm"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        style={{ maxWidth: 600 }}
-        autoComplete="off"
-        onFinishFailed={onFinishFailed}
-        onFinish={formik.handleSubmit}
-      >
-        <Form.Item
-          label="Email"
-          name="email"
-          hasFeedback
-          required
-          validateStatus={formik.errors.email ? "error" : "success"}
-          help={formik.errors.email ? formik.errors.email : null}
-        >
-          <Input
-            id="email"
-            name="email"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.email}
+    <div className="h-screen w-full flex p-10">
+      <div className="p-10 w-1/2">
+        <div className="flex items-center gap-2">
+          <Image
+            src="/icon.svg"
+            alt="Picture of the author"
+            width={30}
+            height={30}
           />
-        </Form.Item>
-        <Form.Item
-          label="Password"
-          name="password"
-          hasFeedback
-          required
-          validateStatus={formik.errors.password ? "error" : "success"}
-          help={formik.errors.password ? formik.errors.password : null}
-        >
-          <Input
-            id="password"
-            name="password"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.password}
-          />
-        </Form.Item>
-        <Form.Item
-          label="Confirm Password"
-          name="cpassword"
-          hasFeedback
-          required
-          validateStatus={formik.errors.cpassword ? "error" : "success"}
-          help={formik.errors.cpassword ? formik.errors.cpassword : null}
-        >
-          <Input
-            id="cpassword"
-            name="cpassword"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.cpassword}
-          />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
+          <h2 className="font-semibold text-xl">Save data</h2>
+        </div>
+        <div className="h-full flex flex-col items-center justify-center">
+          <div className="mb-10 grid gap-6">
+            <h1 className="font-bold text-5xl">Register form</h1>
+            <span>Please fill you detail to access your account.</span>
+          </div>
+          <form
+            className="flex flex-col gap-3 w-full"
+            onSubmit={formik.handleSubmit}
+          >
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between">
+                <label className="font-medium">Email</label>
+                <span className="text-red-500">
+                  {formik.errors.email && formik.errors.email}
+                </span>
+              </div>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                autoComplete="off"
+                className={`w-full py-4 px-6 border rounded-xl bg-slate-50 focus:outline-none ${
+                  formik.errors.email &&
+                  formik.touched.email &&
+                  "border-rose-600"
+                }`}
+                {...formik.getFieldProps("email")}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between">
+                <label className="font-medium">Password</label>
+                <span className="text-red-500">
+                  {formik.errors.password && formik.errors.password}
+                </span>
+              </div>
+              <input
+                id="password"
+                type={showPassword.password ? "text" : "password"}
+                name="password"
+                autoComplete="off"
+                className={`w-full py-4 px-6 border rounded-xl bg-slate-50 focus:outline-none ${
+                  formik.errors.password &&
+                  formik.touched.password &&
+                  "border-rose-600"
+                }`}
+                {...formik.getFieldProps("password")}
+              />
+              <div className="flex items-center gap-3">
+                <input
+                  id="password"
+                  type="checkbox"
+                  className="w-[16px] h-[16px]"
+                  onClick={() =>
+                    setShowPassword({
+                      ...showPassword,
+                      password: !showPassword.password,
+                    })
+                  }
+                />
+                <span>Show Password</span>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between">
+                <label className="font-medium">Confirm Password</label>
+                <span className="text-red-500">
+                  {formik.errors.cpassword && formik.errors.cpassword}
+                </span>
+              </div>
+              <input
+                id="cpassword"
+                type={showPassword.cpassword ? "text" : "password"}
+                name="cpassword"
+                autoComplete="off"
+                className={`w-full py-4 px-6 border rounded-xl bg-slate-50 focus:outline-none ${
+                  formik.errors.cpassword &&
+                  formik.touched.cpassword &&
+                  "border-rose-600"
+                }`}
+                {...formik.getFieldProps("cpassword")}
+              />
+              <div className="flex items-center gap-3">
+                <input
+                  id="cpassword"
+                  type="checkbox"
+                  className="w-[16px] h-[16px]"
+                  onClick={() =>
+                    setShowPassword({
+                      ...showPassword,
+                      cpassword: !showPassword.cpassword,
+                    })
+                  }
+                />
+                <span>Show Password</span>
+              </div>
+            </div>
+            <button
+              type="submit"
+              className="border rounded-lg bg-blue-600 py-2 w-full text-white mt-2"
+            >
+              Register
+            </button>
+          </form>
+          <div className="mt-4">
+            <span>
+              Already have an account?{" "}
+              <Link href="/auth/login">
+                <span className="font-bold text-blue-700">Login</span>
+              </Link>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="w-1/2 relative">
+        <Image src="/login.png" alt="Picture of the author" fill />
+      </div>
     </div>
   );
 }

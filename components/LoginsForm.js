@@ -1,40 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input } from "antd";
 import { useFormik } from "formik";
-import { loginsForm_validate } from "@/lib/validate";
 import { useSession } from "next-auth/react";
+import { loginsForm_validate } from "@/lib/validate";
 import { openNotification } from "@/lib/tools";
-
-const { TextArea } = Input;
 
 export default function LoginsForm({ back, editData }) {
   const { data: session } = useSession();
 
   const [edit, setEdit] = useState(false);
   const [formData, setFormData] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const formik = useFormik({
-    initialValues: { ...formData },
+    initialValues: {},
     validate: loginsForm_validate,
     onSubmit,
   });
 
   useEffect(() => {
     if (editData !== null) {
-      setFormData({ ...editData });
       setEdit(true);
-      formik.initialValues = { ...editData };
       formik.setValues({ ...editData });
     }
   }, []);
-
-  function cancel() {
-    setEdit(false);
-    setFormData({});
-    back();
-  }
-
-  console.log(formik, "formik");
 
   async function onSubmit(values) {
     try {
@@ -69,9 +57,11 @@ export default function LoginsForm({ back, editData }) {
     }
   }
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
+  function cancel() {
+    setEdit(false);
+    setFormData({});
+    back();
+  }
 
   return (
     <div>
@@ -111,125 +101,166 @@ export default function LoginsForm({ back, editData }) {
         </div>
       </div>
       <div className="mt-5">
-        <Form
-          name="loginsForm"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          style={{ maxWidth: 600 }}
-          autoComplete="off"
-          onFinishFailed={onFinishFailed}
-          onFinish={formik.handleSubmit}
+        <form
+          id="loginsForm"
+          className="flex flex-col gap-3 w-full"
+          onSubmit={formik.handleSubmit}
         >
-          <Form.Item
-            label="Website"
-            name="website"
-            hasFeedback
-            required
-            validateStatus={formik.errors.website ? "error" : "success"}
-            help={formik.errors.website ? formik.errors.website : null}
-          >
-            <Input
-              id="website"
-              name="website"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.website}
-            />
-          </Form.Item>
-          <Form.Item
-            label="URL"
-            name="url"
-            hasFeedback
-            validateStatus={formik.errors.url ? "error" : "success"}
-            help={formik.errors.url ? formik.errors.url : null}
-          >
-            <Input
-              id="url"
-              name="url"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.url}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Email"
-            name="email"
-            hasFeedback
-            required
-            validateStatus={formik.errors.email ? "error" : "success"}
-            help={formik.errors.email ? formik.errors.email : null}
-          >
-            <Input
-              id="email"
-              name="email"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.email}
-            />
-          </Form.Item>
-          <Form.Item
-            label="User Name"
-            name="username"
-            hasFeedback
-            validateStatus={formik.errors.username ? "error" : "success"}
-            help={formik.errors.username ? formik.errors.username : null}
-          >
-            <Input
-              id="username"
-              name="username"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.username}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Password"
-            name="password"
-            hasFeedback
-            required
-            validateStatus={formik.errors.password ? "error" : "success"}
-            help={formik.errors.password ? formik.errors.password : null}
-          >
-            <Input
-              id="password"
-              name="password"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.password}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Phone"
-            name="phone"
-            hasFeedback
-            validateStatus={formik.errors.phone ? "error" : "success"}
-            help={formik.errors.phone ? formik.errors.phone : null}
-          >
-            <Input
-              id="phone"
-              name="phone"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.phone}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Notes"
-            name="notes"
-            hasFeedback
-            validateStatus={formik.errors.notes ? "error" : "success"}
-            help={formik.errors.notes ? formik.errors.notes : null}
-          >
-            <TextArea
-              id="notes"
-              name="notes"
+          <div className="flex w-full gap-6">
+            <div className="flex flex-col gap-2 w-1/2">
+              <div className="flex justify-between">
+                <label className="font-medium">Website</label>
+                <span className="text-red-500">
+                  {formik.errors.website && formik.errors.website}
+                </span>
+              </div>
+              <input
+                id="website"
+                type="text"
+                name="website"
+                autoComplete="off"
+                className={`w-full py-4 px-6 border rounded-xl bg-slate-50 focus:outline-none ${
+                  formik.errors.website &&
+                  formik.touched.website &&
+                  "border-rose-600"
+                }`}
+                {...formik.getFieldProps("website")}
+              />
+            </div>
+            <div className="flex flex-col gap-2  w-1/2">
+              <div className="flex justify-between">
+                <label className="font-medium">URL</label>
+                <span className="text-red-500">
+                  {formik.errors.url && formik.errors.url}
+                </span>
+              </div>
+              <input
+                id="url"
+                type="text"
+                name="url"
+                autoComplete="off"
+                className={`w-full py-4 px-6 border rounded-xl bg-slate-50 focus:outline-none ${
+                  formik.errors.url && formik.touched.url && "border-rose-600"
+                }`}
+                {...formik.getFieldProps("url")}
+              />
+            </div>
+          </div>
+
+          <div className="flex w-full gap-6">
+            <div className="flex flex-col gap-2 w-1/2">
+              <div className="flex justify-between">
+                <label className="font-medium">Email</label>
+                <span className="text-red-500">
+                  {formik.errors.email && formik.errors.email}
+                </span>
+              </div>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                autoComplete="off"
+                className={`w-full py-4 px-6 border rounded-xl bg-slate-50 focus:outline-none ${
+                  formik.errors.email &&
+                  formik.touched.email &&
+                  "border-rose-600"
+                }`}
+                {...formik.getFieldProps("email")}
+              />
+            </div>
+            <div className="flex flex-col gap-2 w-1/2">
+              <div className="flex justify-between">
+                <label className="font-medium">Password</label>
+                <span className="text-red-500">
+                  {formik.errors.password && formik.errors.password}
+                </span>
+              </div>
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                autoComplete="off"
+                className={`w-full py-4 px-6 border rounded-xl bg-slate-50 focus:outline-none ${
+                  formik.errors.password &&
+                  formik.touched.password &&
+                  "border-rose-600"
+                }`}
+                {...formik.getFieldProps("password")}
+              />
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  className="w-[16px] h-[16px]"
+                  onClick={() => setShowPassword(!showPassword)}
+                />
+                <span>Show Password</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex w-full gap-6">
+            <div className="flex flex-col gap-2 w-1/2">
+              <div className="flex justify-between">
+                <label className="font-medium">User name</label>
+                <span className="text-red-500">
+                  {formik.errors.username && formik.errors.username}
+                </span>
+              </div>
+              <input
+                id="username"
+                type="text"
+                name="username"
+                autoComplete="off"
+                className={`w-full py-4 px-6 border rounded-xl bg-slate-50 focus:outline-none ${
+                  formik.errors.username &&
+                  formik.touched.username &&
+                  "border-rose-600"
+                }`}
+                {...formik.getFieldProps("username")}
+              />
+            </div>
+            <div className="flex flex-col gap-2 w-1/2">
+              <div className="flex justify-between">
+                <label className="font-medium">Phone</label>
+                <span className="text-red-500">
+                  {formik.errors.phone && formik.errors.phone}
+                </span>
+              </div>
+              <input
+                id="phone"
+                type="text"
+                name="phone"
+                autoComplete="off"
+                className={`w-full py-4 px-6 border rounded-xl bg-slate-50 focus:outline-none ${
+                  formik.errors.phone &&
+                  formik.touched.phone &&
+                  "border-rose-600"
+                }`}
+                {...formik.getFieldProps("phone")}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between">
+              <label className="font-medium">Note</label>
+              <span className="text-red-500">
+                {formik.errors.notes && formik.errors.notes}
+              </span>
+            </div>
+            <textarea
               rows={4}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.notes}
+              id="notes"
+              type="text"
+              name="notes"
+              autoComplete="off"
+              className={`w-full py-4 px-6 border rounded-xl bg-slate-50 focus:outline-none ${
+                formik.errors.notes && formik.touched.notes && "border-rose-600"
+              }`}
+              {...formik.getFieldProps("notes")}
             />
-          </Form.Item>
-        </Form>
+          </div>
+        </form>
       </div>
     </div>
   );
