@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { openNotification } from "@/lib/tools";
-import LoginsForm from "@/components/LoginsForm";
+import LoginsForm from "@/src/logins/LoginsForm";
 import PlusButton from "@/components/PlusButton";
 import Icon from "@/components/Icon";
 
@@ -112,7 +112,7 @@ export default function LoginsPage() {
   }
 
   return (
-    <div className="p-4">
+    <div>
       {!showForm ? (
         <>
           <div className="md:flex md:justify-between items-center mb-6">

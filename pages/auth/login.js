@@ -37,7 +37,7 @@ export default function Login() {
           type: "success",
           title: "Амжилттай нэвтэрлээ",
         });
-        router.push("/");
+        router.push("/logins");
       }
     } catch (error) {
       console.log(error, "error");

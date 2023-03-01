@@ -7,7 +7,7 @@ const menu = [
     icon: <Icon icon="mdi:star-outline" className="text-2xl" />,
     name: "Favorites",
     count: 0,
-    href: "#",
+    href: "/favorites",
   },
   {
     icon: <Icon icon="mdi:account-circle-outline" className="text-2xl" />,
@@ -19,25 +19,25 @@ const menu = [
     icon: <Icon icon="mdi:wallet-outline" className="text-2xl" />,
     name: "Wallets",
     count: 0,
-    href: "#",
+    href: "/wallets",
   },
   {
     icon: <Icon icon="mdi:map-marker-outline" className="text-2xl" />,
     name: "Address",
     count: 0,
-    href: "#",
+    href: "/address",
   },
   {
     icon: <Icon icon="mdi:card-account-phone-outline" className="text-2xl" />,
     name: "Phones",
     count: 0,
-    href: "#",
+    href: "/phones",
   },
   {
     icon: <Icon icon="mdi:note-text-outline" className="text-2xl" />,
     name: "Notes",
     count: 0,
-    href: "#",
+    href: "/notes",
   },
 ];
 

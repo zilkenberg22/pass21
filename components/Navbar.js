@@ -21,10 +21,19 @@ export default function Navbar() {
         />
         <h2 className="font-semibold text-xl hidden md:block">Save data</h2>
       </div>
-      <div className="flex gap-5">
-        <span>{session?.user?.email}</span>
+      <div className="flex items-center gap-5">
+        <div className="flex items-center gap-2">
+          <Icon icon="mdi:account-outline" className="text-2xl" />
+          <span>{session?.user?.email}</span>
+        </div>
         {session && (
-          <button onClick={() => signOut({ callbackUrl: "/" })}>Logout</button>
+          <button
+            className="flex gap-2 items-center border rounded p-2 text-base font-semibold"
+            onClick={() => signOut({ callbackUrl: "/" })}
+          >
+            <Icon icon="mdi:logout" className="text-xl" />
+            Logout
+          </button>
         )}
         <button className="block md:hidden" onClick={() => setOpen(!open)}>
           <Icon icon="mdi:menu" className="text-xl" />

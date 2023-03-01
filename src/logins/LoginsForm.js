@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { Modal, Slider } from "antd";
 import { loginsForm_validate } from "@/lib/validate";
 import { generatePassword, openNotification } from "@/lib/tools";
-import Icon from "./Icon";
+import Icon from "../../components/Icon";
 
 export default function LoginsForm({ back, editData }) {
   const { data: session } = useSession();

@@ -21,7 +21,7 @@ export default function Layout({ children }) {
             <div className="w-[20%] bg-[#f4f1ed] hidden md:block">
               <Sidebar />
             </div>
-            <div className="w-full  md:w-[80%]">{children}</div>
+            <div className="w-full  md:w-[80%] p-4">{children}</div>
           </main>
         </>
       ) : (

@@ -1,4 +1,4 @@
-import Logins from "@/src/accounts/Logins";
+import Logins from "@/src/logins/Logins";
 import withAuth from "@/middleware/auth";
 
 export default function LoginsPage() {
