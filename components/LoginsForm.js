@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { Modal, Slider } from "antd";
 import { loginsForm_validate } from "@/lib/validate";
 import { generatePassword, openNotification } from "@/lib/tools";
+import Icon from "./Icon";
 
 export default function LoginsForm({ back, editData }) {
   const { data: session } = useSession();
@@ -48,25 +49,22 @@ export default function LoginsForm({ back, editData }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       };
-
-      await fetch("/api/logins", options)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.status) {
-            openNotification({
-              type: "success",
-              title: "Амжилттай",
-              message: data.message,
-            });
-            back();
-          } else if (data.message) {
-            openNotification({
-              type: "error",
-              title: "Алдаа",
-              message: data.message,
-            });
-          }
+      const response = await fetch("/api/decryptPassword", options);
+      const json = await response.json();
+      if (json.status) {
+        openNotification({
+          type: "success",
+          title: "Амжилттай",
+          message: json.message,
         });
+        back();
+      } else if (json.message) {
+        openNotification({
+          type: "error",
+          title: "Алдаа",
+          message: json.message,
+        });
+      }
     } catch (error) {
       console.log(error, "error");
     }
@@ -79,26 +77,23 @@ export default function LoginsForm({ back, editData }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       };
-
-      await fetch(`/api/logins/${editData._id}`, options)
-        .then((res) => res.json())
-        .then((json) => {
-          if (json.message) {
-            openNotification({
-              type: "error",
-              title: "Алдаа",
-              message: json.message,
-            });
-          }
-          if (json.status) {
-            openNotification({
-              type: "success",
-              title: "Амжилттай",
-              message: json.message,
-            });
-            back();
-          }
+      const response = await fetch(`/api/logins/${editData._id}`, options);
+      const json = await response.json();
+      if (json.message) {
+        openNotification({
+          type: "error",
+          title: "Алдаа",
+          message: json.message,
         });
+      }
+      if (json.status) {
+        openNotification({
+          type: "success",
+          title: "Амжилттай",
+          message: json.message,
+        });
+        back();
+      }
     } catch (error) {
       console.log(error, "error");
     }
@@ -126,17 +121,7 @@ export default function LoginsForm({ back, editData }) {
       <div className="md:flex md:justify-between items-center">
         <div className="flex gap-3 items-center">
           <button onClick={() => cancel()}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="currentColor"
-                d="m12 20l-8-8l8-8l1.425 1.4l-5.6 5.6H20v2H7.825l5.6 5.6L12 20Z"
-              />
-            </svg>
+            <Icon icon="mdi:arrow-left" className="text-3xl" />
           </button>
           <div className="text-xl font-bold text-gray-600">
             {!edit ? "Add A Login" : formData.website}
@@ -355,22 +340,7 @@ export default function LoginsForm({ back, editData }) {
                 {generatedPassword}
               </div>
               <button onClick={() => generateNewPassword()}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="30"
-                  height="30"
-                  viewBox="0 0 16 16"
-                  className="text-white"
-                >
-                  <path
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="1.5"
-                    d="M4.75 10.75h-3m12.5-2c0 3-2.798 5.5-6.25 5.5c-3.75 0-6.25-3.5-6.25-3.5v3.5m9.5-9h3m-12.5 2c0-3 2.798-5.5 6.25-5.5c3.75 0 6.25 3.5 6.25 3.5v-3.5"
-                  />
-                </svg>
+                <Icon icon="mdi:refresh" className="text-5xl text-white" />
               </button>
             </div>
             <div className="w-full md:w-fit flex justify-center">

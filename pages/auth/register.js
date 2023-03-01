@@ -37,24 +37,22 @@ export default function Register() {
         body: JSON.stringify(values),
       };
 
-      await fetch("/api/auth/signup", options)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.status) {
-            openNotification({
-              type: "success",
-              title: "Амжилттай",
-              message: data.message,
-            });
-            router.push("/auth/login");
-          } else if (data.message) {
-            openNotification({
-              type: "error",
-              title: "Алдаа",
-              message: data.message,
-            });
-          }
+      const response = await fetch("/api/auth/signup", options);
+      const json = await response.json();
+      if (json.status) {
+        openNotification({
+          type: "success",
+          title: "Амжилттай",
+          message: json.message,
         });
+        router.push("/auth/login");
+      } else if (json.message) {
+        openNotification({
+          type: "error",
+          title: "Алдаа",
+          message: json.message,
+        });
+      }
     } catch (error) {
       console.log(error, "error");
     }

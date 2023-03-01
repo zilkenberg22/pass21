@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { Drawer } from "antd";
 import Sidebar from "./Sidebar";
+import Icon from "./Icon";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -26,17 +27,7 @@ export default function Navbar() {
           <button onClick={() => signOut({ callbackUrl: "/" })}>Logout</button>
         )}
         <button className="block md:hidden" onClick={() => setOpen(!open)}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill="currentColor"
-              d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"
-            />
-          </svg>
+          <Icon icon="mdi:menu" className="text-xl" />
         </button>
       </div>
       <Drawer placement="right" onClose={() => setOpen(false)} open={open}>

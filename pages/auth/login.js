@@ -26,17 +26,21 @@ export default function Login() {
   });
 
   async function onSubmit(values) {
-    const status = await signIn("credentials", {
-      redirect: false,
-      email: values.email,
-      password: values.password,
-    });
-    if (status.ok) {
-      openNotification({
-        type: "success",
-        title: "Амжилттай нэвтэрлээ",
+    try {
+      const status = await signIn("credentials", {
+        redirect: false,
+        email: values.email,
+        password: values.password,
       });
-      router.push("/");
+      if (status.ok) {
+        openNotification({
+          type: "success",
+          title: "Амжилттай нэвтэрлээ",
+        });
+        router.push("/");
+      }
+    } catch (error) {
+      console.log(error, "error");
     }
   }
 
