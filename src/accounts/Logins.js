@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import { openNotification } from "@/lib/tools";
 import LoginsForm from "@/components/LoginsForm";
 import PlusButton from "@/components/PlusButton";
-import { openNotification } from "@/lib/tools";
 import Icon from "@/components/Icon";
 
 export default function LoginsPage() {
@@ -128,7 +128,7 @@ export default function LoginsPage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {loginsData.map((x, i) => (
-              <div className="border rounded-lg p-2 grid gap-3">
+              <div className="border rounded-lg p-2 grid gap-3" key={i}>
                 <div className="flex w-full justify-between items-center">
                   <button>
                     <Icon icon="mdi:star-outline" className="text-xl" />
@@ -139,23 +139,18 @@ export default function LoginsPage() {
                 </div>
                 <div className="flex w-full justify-between">
                   <span>{x.website}</span>
-                  <button
-                    className=""
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    <a href={x.url} target="_blank" rel="noopener noreferrer">
-                      <Icon icon="mdi:login" className="text-xl" />
-                    </a>
-                  </button>
+                  {x.url && (
+                    <button>
+                      <a href={x.url} target="_blank" rel="noopener noreferrer">
+                        <Icon icon="mdi:login" className="text-xl" />
+                      </a>
+                    </button>
+                  )}
                 </div>
                 <div className="flex w-full justify-between">
                   <span>{x.username}</span>
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
+                    onClick={(e) => navigator.clipboard.writeText(x.username)}
                   >
                     <Icon icon="mdi:content-copy" className="text-xl" />
                   </button>
@@ -167,7 +162,6 @@ export default function LoginsPage() {
                   <div className="flex gap-2">
                     {showPassword !== i ? (
                       <button
-                        className=""
                         onClick={() => {
                           setShowPassword(i);
                           decryptPassword(x.password);

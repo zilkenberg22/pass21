@@ -236,7 +236,7 @@ export default function LoginsForm({ back, editData }) {
                     type="checkbox"
                     className="w-[16px] h-[16px]"
                     checked={showPassword}
-                    onClick={() => setShowPassword(!showPassword)}
+                    onChange={() => setShowPassword(!showPassword)}
                   />
                   <span>Show Password</span>
                 </div>
@@ -245,7 +245,7 @@ export default function LoginsForm({ back, editData }) {
                     type="checkbox"
                     className="w-[16px] h-[16px]"
                     checked={showGenerater}
-                    onClick={() => {
+                    onChange={() => {
                       generateNewPassword();
                       setShowGenerater(true);
                     }}
