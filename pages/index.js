@@ -1,6 +1,7 @@
 import Icon from "@/components/Icon";
 import PasswordGenerator from "@/src/PasswordGenerator";
 import Image from "next/image";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const sectionStyle = {
@@ -42,10 +43,10 @@ export default function Home() {
           />
           <h2 className="font-semibold text-xl">Save data</h2>
         </div>
-        <a className="flex items-center gap-3">
+        <Link href="/auth/login" className="flex items-center gap-3">
           <span className="text-lg font-medium text-blue-600">Sign In</span>
           <Icon icon="mdi:account-circle-outline" className="text-3xl" />
-        </a>
+        </Link>
       </div>
 
       <div style={{ height: `${maxHeight}px` }} className="mt-[68px]">
