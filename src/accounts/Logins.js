@@ -159,15 +159,19 @@ export default function LoginsPage() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4">
       {!showForm ? (
         <>
-          <div className="flex justify-between items-center mb-6">
+          <div className="md:flex md:justify-between items-center mb-6">
             <div>
               <div className="text-lg font-semibold">Logins</div>
               <div className="text-gray-500">2 websites / apps</div>
             </div>
-            <input type="text" placeholder="Search for username and website" />
+            <input
+              type="text"
+              placeholder="Search for username and website"
+              className="w-full py-4 px-6 border rounded-xl bg-slate-50 focus:outline-none mt-4 md:w-3/5"
+            />
           </div>
           <div className="border rounded">
             <div className="flex w-full border-b p-2 gap-x-3">

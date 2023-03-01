@@ -62,7 +62,7 @@ export default function Register() {
 
   return (
     <div className="h-screen w-full flex p-10">
-      <div className="p-10 w-1/2">
+      <div className="p-10 w-full md:w-1/2">
         <div className="flex items-center gap-2">
           <Image
             src="/icon.svg"
@@ -186,7 +186,7 @@ export default function Register() {
           </div>
         </div>
       </div>
-      <div className="w-1/2 relative">
+      <div className="w-1/2 relative hidden md:block">
         <Image src="/login.png" alt="Picture of the author" fill />
       </div>
     </div>

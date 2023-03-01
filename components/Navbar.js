@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
+import { Drawer } from "antd";
+import Sidebar from "./Sidebar";
 
 export default function Navbar() {
   const { data: session } = useSession();
+
+  const [open, setOpen] = useState(false);
 
   return (
     <div id="Navbar" className="flex justify-between items-center p-5">
@@ -14,14 +18,30 @@ export default function Navbar() {
           width={30}
           height={30}
         />
-        <h2 className="font-semibold text-xl">Save data</h2>
+        <h2 className="font-semibold text-xl hidden md:block">Save data</h2>
       </div>
       <div className="flex gap-5">
         <span>{session?.user?.email}</span>
         {session && (
           <button onClick={() => signOut({ callbackUrl: "/" })}>Logout</button>
         )}
+        <button className="block md:hidden" onClick={() => setOpen(!open)}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill="currentColor"
+              d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"
+            />
+          </svg>
+        </button>
       </div>
+      <Drawer placement="right" onClose={() => setOpen(false)} open={open}>
+        <Sidebar />
+      </Drawer>
     </div>
   );
 }

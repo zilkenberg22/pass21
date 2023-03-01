@@ -18,10 +18,10 @@ export default function Layout({ children }) {
         <>
           <Navbar />
           <main style={{ height: `${maxHeight}px` }} className="flex">
-            <div className="w-[20%] bg-[#f4f1ed]">
+            <div className="w-[20%] bg-[#f4f1ed] hidden md:block">
               <Sidebar />
             </div>
-            <div className="w-[80%]">{children}</div>
+            <div className="w-full  md:w-[80%]">{children}</div>
           </main>
         </>
       ) : (

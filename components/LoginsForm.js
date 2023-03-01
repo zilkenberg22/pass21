@@ -123,7 +123,7 @@ export default function LoginsForm({ back, editData }) {
 
   return (
     <div>
-      <div className="flex justify-between items-center">
+      <div className="md:flex md:justify-between items-center">
         <div className="flex gap-3 items-center">
           <button onClick={() => cancel()}>
             <svg
@@ -142,7 +142,7 @@ export default function LoginsForm({ back, editData }) {
             {!edit ? "Add A Login" : formData.website}
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 mt-4 md:mt-0">
           <div
             className="cursor-pointer rounded-3xl px-4 text-base leading-9 min-w-[120px] flex justify-center border-[3px] border-[#242424] hover:bg-[#242424] hover:text-[white]"
             onClick={() => cancel()}
@@ -164,8 +164,8 @@ export default function LoginsForm({ back, editData }) {
           className="flex flex-col gap-3 w-full"
           onSubmit={formik.handleSubmit}
         >
-          <div className="flex w-full gap-6">
-            <div className="flex flex-col gap-2 w-1/2">
+          <div className="md:flex w-full gap-6">
+            <div className="flex flex-col gap-2 w-full md:w-1/2">
               <div className="flex justify-between">
                 <label className="font-medium">Website</label>
                 <span className="text-red-500">
@@ -185,7 +185,7 @@ export default function LoginsForm({ back, editData }) {
                 {...formik.getFieldProps("website")}
               />
             </div>
-            <div className="flex flex-col gap-2  w-1/2">
+            <div className="flex flex-col gap-2 w-full md:w-1/2">
               <div className="flex justify-between">
                 <label className="font-medium">URL</label>
                 <span className="text-red-500">
@@ -205,8 +205,8 @@ export default function LoginsForm({ back, editData }) {
             </div>
           </div>
 
-          <div className="flex w-full gap-6">
-            <div className="flex flex-col gap-2 w-1/2">
+          <div className="md:flex w-full gap-6">
+            <div className="flex flex-col gap-2 w-full md:w-1/2">
               <div className="flex justify-between">
                 <label className="font-medium">Email</label>
                 <span className="text-red-500">
@@ -226,7 +226,7 @@ export default function LoginsForm({ back, editData }) {
                 {...formik.getFieldProps("email")}
               />
             </div>
-            <div className="flex flex-col gap-2 w-1/2">
+            <div className="flex flex-col gap-2 w-full md:w-1/2">
               <div className="flex justify-between">
                 <label className="font-medium">Password</label>
                 <span className="text-red-500">
@@ -271,8 +271,8 @@ export default function LoginsForm({ back, editData }) {
             </div>
           </div>
 
-          <div className="flex w-full gap-6">
-            <div className="flex flex-col gap-2 w-1/2">
+          <div className="md:flex w-full gap-6">
+            <div className="flex flex-col gap-2 w-full md:w-1/2">
               <div className="flex justify-between">
                 <label className="font-medium">User name</label>
                 <span className="text-red-500">
@@ -292,7 +292,7 @@ export default function LoginsForm({ back, editData }) {
                 {...formik.getFieldProps("username")}
               />
             </div>
-            <div className="flex flex-col gap-2 w-1/2">
+            <div className="flex flex-col gap-2 w-full md:w-1/2">
               <div className="flex justify-between">
                 <label className="font-medium">Phone</label>
                 <span className="text-red-500">
@@ -346,37 +346,41 @@ export default function LoginsForm({ back, editData }) {
         okButtonProps={() => <button>ok</button>}
       >
         <div className="w-full">
-          <h2 className="font-semibold text-3xl flex justify-center mb-10">
-            Create strong passwords with Password Generator
+          <h2 className="font-semibold text-xl md:text-3xl flex justify-center mb-10">
+            Create strong password
           </h2>
-          <div className="flex w-full items-center gap-5 justify-center bg-green-300 ">
-            <div className="border-none focus:outline-none w-3/5 py-6 text-4xl text-white tracking-wider bg-green-300">
-              {generatedPassword}
+          <div className="md:flex w-full items-center gap-5 bg-green-300 ">
+            <div className="flex px-2 w-full">
+              <div className="border-none focus:outline-none w-full md:w-4/5 py-6 text-4xl text-white tracking-wider bg-green-300">
+                {generatedPassword}
+              </div>
+              <button onClick={() => generateNewPassword()}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="30"
+                  height="30"
+                  viewBox="0 0 16 16"
+                  className="text-white"
+                >
+                  <path
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M4.75 10.75h-3m12.5-2c0 3-2.798 5.5-6.25 5.5c-3.75 0-6.25-3.5-6.25-3.5v3.5m9.5-9h3m-12.5 2c0-3 2.798-5.5 6.25-5.5c3.75 0 6.25 3.5 6.25 3.5v-3.5"
+                  />
+                </svg>
+              </button>
             </div>
-            <button onClick={() => generateNewPassword()}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="30"
-                height="30"
-                viewBox="0 0 16 16"
-                className="text-white"
+            <div className="w-full md:w-fit flex justify-center">
+              <button
+                className="bg-yellow-500 text-white p-2 px-4 text-xl"
+                onClick={() => navigator.clipboard.writeText(generatedPassword)}
               >
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="1.5"
-                  d="M4.75 10.75h-3m12.5-2c0 3-2.798 5.5-6.25 5.5c-3.75 0-6.25-3.5-6.25-3.5v3.5m9.5-9h3m-12.5 2c0-3 2.798-5.5 6.25-5.5c3.75 0 6.25 3.5 6.25 3.5v-3.5"
-                />
-              </svg>
-            </button>
-            <button
-              className="bg-yellow-500 text-white p-2 px-4 text-xl"
-              onClick={() => navigator.clipboard.writeText(generatedPassword)}
-            >
-              Copy Password
-            </button>
+                Copy Password
+              </button>
+            </div>
           </div>
           <Slider
             min={12}
