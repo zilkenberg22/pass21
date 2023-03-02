@@ -7,7 +7,7 @@ export default function withAuth(handler) {
     if (!session) {
       return {
         redirect: {
-          destination: "/auth/login",
+          destination: "/",
           permanent: false,
         },
       };

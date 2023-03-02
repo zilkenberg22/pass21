@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { openNotification } from "@/lib/tools";
+import { openNotification, showLoader } from "@/lib/tools";
 import LoginsForm from "@/src/logins/LoginsForm";
 import PlusButton from "@/components/PlusButton";
 import Icon from "@/components/Icon";
 
 export default function LoginsPage() {
+  console.log("first");
   const router = useRouter();
   const { data: session } = useSession();
   const [showForm, setShowForm] = useState(false);
@@ -20,7 +21,7 @@ export default function LoginsPage() {
     if (session) {
       getLogins();
     } else {
-      router.push("/");
+      // router.push("/");
     }
   }, [session]);
 
@@ -47,6 +48,7 @@ export default function LoginsPage() {
   }
 
   async function getLogins() {
+    showLoader(true);
     try {
       const options = {
         method: "GET",
@@ -55,8 +57,10 @@ export default function LoginsPage() {
       const response = await fetch("/api/logins", options);
       const json = await response.json();
       setLoginsData([...json.data]);
+      showLoader(false);
     } catch (error) {
       console.log(error, "error");
+      showLoader(false);
     }
   }
 

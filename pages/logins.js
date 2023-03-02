@@ -1,5 +1,5 @@
-import Logins from "@/src/logins/Logins";
 import withAuth from "@/middleware/auth";
+import Logins from "@/src/logins/Logins";
 
 export default function LoginsPage() {
   return <Logins />;

@@ -6,8 +6,8 @@ import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 
 export default function Layout({ children }) {
-  let maxHeight = getChildrenHeight();
   const { data: session } = useSession();
+  let maxHeight = getChildrenHeight();
 
   return (
     <div>

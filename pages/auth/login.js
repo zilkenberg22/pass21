@@ -5,16 +5,18 @@ import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import { signIn, useSession } from "next-auth/react";
 import { login_validate } from "@/lib/validate";
-import { openNotification } from "@/lib/tools";
+import { openNotification, showLoader } from "@/lib/tools";
 
 export default function Login() {
   const router = useRouter();
   const { data: session } = useSession();
   const [showPassword, setShowPassword] = useState(false);
 
-  if (session) {
-    router.push("/");
-  }
+  console.log(router, "router");
+
+  // if (session) {
+  //   router.push("/");
+  // }
 
   const formik = useFormik({
     initialValues: {
@@ -26,6 +28,7 @@ export default function Login() {
   });
 
   async function onSubmit(values) {
+    showLoader(true);
     try {
       const status = await signIn("credentials", {
         redirect: false,
@@ -39,8 +42,10 @@ export default function Login() {
         });
         router.push("/logins");
       }
+      showLoader(false);
     } catch (error) {
       console.log(error, "error");
+      showLoader(false);
     }
   }
 

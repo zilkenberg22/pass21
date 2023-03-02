@@ -1,8 +1,8 @@
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import Icon from "@/components/Icon";
 import PasswordGenerator from "@/src/PasswordGenerator";
-import Image from "next/image";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
 
 const sectionStyle = {
   backgroundImage: `url(/landing-screen.jpg)`,
