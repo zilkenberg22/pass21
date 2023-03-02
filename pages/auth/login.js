@@ -3,20 +3,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, getCsrfToken } from "next-auth/react";
 import { login_validate } from "@/lib/validate";
 import { openNotification, showLoader } from "@/lib/tools";
 
 export default function Login() {
   const router = useRouter();
-  const { data: session } = useSession();
   const [showPassword, setShowPassword] = useState(false);
-
-  console.log(router, "router");
-
-  // if (session) {
-  //   router.push("/");
-  // }
 
   const formik = useFormik({
     initialValues: {
@@ -40,9 +33,9 @@ export default function Login() {
           type: "success",
           title: "Амжилттай нэвтэрлээ",
         });
+        showLoader(false);
         router.push("/logins");
       }
-      showLoader(false);
     } catch (error) {
       console.log(error, "error");
       showLoader(false);
@@ -70,6 +63,11 @@ export default function Login() {
             className="flex flex-col gap-3 w-full"
             onSubmit={formik.handleSubmit}
           >
+            <input
+              type="hidden"
+              name="csrfToken"
+              defaultValue={getCsrfToken()}
+            />
             <div className="flex flex-col gap-2">
               <div className="flex justify-between">
                 <label className="font-medium">Email</label>

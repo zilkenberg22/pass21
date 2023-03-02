@@ -7,7 +7,6 @@ import PlusButton from "@/components/PlusButton";
 import Icon from "@/components/Icon";
 
 export default function LoginsPage() {
-  console.log("first");
   const router = useRouter();
   const { data: session } = useSession();
   const [showForm, setShowForm] = useState(false);
@@ -18,12 +17,8 @@ export default function LoginsPage() {
   const [loginsData, setLoginsData] = useState([]);
 
   useEffect(() => {
-    if (session) {
-      getLogins();
-    } else {
-      // router.push("/");
-    }
-  }, [session]);
+    if (session) getLogins();
+  }, []);
 
   function addLogins() {
     setShowForm(true);
@@ -48,8 +43,8 @@ export default function LoginsPage() {
   }
 
   async function getLogins() {
-    showLoader(true);
     try {
+      showLoader(true);
       const options = {
         method: "GET",
         headers: { Authorization: `Bearer ${session?.user?._id}` },

@@ -49,7 +49,7 @@ export default function LoginsForm({ back, editData }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       };
-      const response = await fetch("/api/decryptPassword", options);
+      const response = await fetch("/api/logins", options);
       const json = await response.json();
       if (json.status) {
         openNotification({

@@ -37,7 +37,6 @@ export default async function handler(req, res) {
             if (err) return res.status(404).json({ err });
             res.status(201).json({
               status: true,
-              user: data,
               message: "Таны бүртгэл амжилттай.",
             });
           }
