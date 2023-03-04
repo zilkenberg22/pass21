@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { openNotification, showLoader } from "@/lib/tools";
 import LoginsForm from "@/src/logins/LoginsForm";
 import PlusButton from "@/components/PlusButton";
-import Icon from "@/components/Icon";
 import PagesHeader from "@/components/PagesHeader";
+import Icon from "@/components/Icon";
 
 export default function LoginsPage() {
+  const router = useRouter();
   const { data: session } = useSession();
   const [showForm, setShowForm] = useState(false);
   const [showPassword, setShowPassword] = useState(null);
@@ -17,6 +19,7 @@ export default function LoginsPage() {
 
   useEffect(() => {
     if (session) getLogins();
+    else router.push("/");
   }, []);
 
   function addLogins() {
