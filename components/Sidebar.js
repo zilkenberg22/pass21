@@ -44,8 +44,6 @@ const menu = [
 function Sidebar(props) {
   const [selectedMenu, setSelectedMenu] = useState(0);
 
-  console.log(props, "first");
-
   useEffect(() => {
     async function getCount() {
       const options = {
@@ -55,7 +53,6 @@ function Sidebar(props) {
 
       const response = await fetch("/api/getCount", options);
       const json = await response.json();
-      console.log(json, "json");
     }
     getCount();
   }, []);

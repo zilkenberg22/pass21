@@ -2,7 +2,6 @@ import connectMongo from "@/lib/dbConnect";
 import Logins from "@/models/LoginsModel";
 
 export default async function handler(req, res) {
-  console.log(req, "req");
   connectMongo().catch((error) => res.json({ error: "Connection Failed...!" }));
   switch (req.method) {
     case "GET":
