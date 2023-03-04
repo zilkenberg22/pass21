@@ -95,7 +95,11 @@ export default function PasswordGenerator() {
         />
         <div className="md:flex items-center gap-x-5">
           <div className="flex gap-2 text-xl items-center">
-            <input type="checkbox" className="w-[20px] h-[20px]" checked />
+            <input
+              type="checkbox"
+              className="w-[20px] h-[20px]"
+              defaultChecked={true}
+            />
             Letters
           </div>
           <div className="flex gap-2 text-xl items-center">

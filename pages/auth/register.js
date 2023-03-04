@@ -125,7 +125,7 @@ export default function Register() {
                 </span>
               </div>
               <input
-                id="password"
+                id="registerPassword"
                 type={showPassword.password ? "text" : "password"}
                 name="password"
                 autoComplete="off"
@@ -138,7 +138,7 @@ export default function Register() {
               />
               <div className="flex items-center gap-3">
                 <input
-                  id="password"
+                  id="showRegisterPassword"
                   type="checkbox"
                   className="w-[16px] h-[16px]"
                   onClick={() =>
@@ -159,7 +159,7 @@ export default function Register() {
                 </span>
               </div>
               <input
-                id="cpassword"
+                id="confirmpassword"
                 type={showPassword.cpassword ? "text" : "password"}
                 name="cpassword"
                 autoComplete="off"
@@ -172,7 +172,7 @@ export default function Register() {
               />
               <div className="flex items-center gap-3">
                 <input
-                  id="cpassword"
+                  id="showconfirmpassword"
                   type="checkbox"
                   className="w-[16px] h-[16px]"
                   onClick={() =>
