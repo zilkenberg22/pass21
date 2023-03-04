@@ -1,18 +1,12 @@
-import { showLoader } from "@/lib/tools";
-import withAuth from "@/middleware/auth";
 import React from "react";
+import withAuth from "@/middleware/auth";
+import PagesHeader from "@/components/PagesHeader";
 
 export default function Address() {
   return (
     <div>
-      Address
-      <button
-        onClick={() => {
-          showLoader(true);
-        }}
-      >
-        test
-      </button>
+      <PagesHeader title="Address" />
+      <div>asd</div>
     </div>
   );
 }
