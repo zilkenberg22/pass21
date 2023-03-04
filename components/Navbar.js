@@ -40,7 +40,7 @@ export default function Navbar() {
         </button>
       </div>
       <Drawer placement="right" open={open} onClose={() => setOpen(false)}>
-        <Sidebar onClose={() => setOpen(false)} />
+        <Sidebar onClose={() => setOpen(false)} open={open} />
       </Drawer>
     </div>
   );

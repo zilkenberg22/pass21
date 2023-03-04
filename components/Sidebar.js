@@ -64,13 +64,16 @@ function Sidebar(props) {
       </div>
       <div className="p-4">
         {menu.map((x, i) => (
-          <Link href={x.href} key={`${i}side`} onClick={() => props.onClose()}>
+          <Link href={x.href} key={`${i}side`}>
             <div
               key={i}
               className={`flex py-2 px-4 justify-between rounded-lg mb-2 ${
                 selectedMenu === i ? "bg-[#feeb29]" : "bg-white"
               } ${selectedMenu !== i && "hover:bg-[#ffffff99]"}`}
-              onClick={() => setSelectedMenu(i)}
+              onClick={() => {
+                setSelectedMenu(i);
+                props.open && props.onClose();
+              }}
             >
               <div className="flex gap-4">
                 {x.icon}
