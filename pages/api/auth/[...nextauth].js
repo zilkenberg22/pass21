@@ -33,8 +33,8 @@ export default NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
-    maxAge: 1 * 60,
-    // updateAge: 15 * 60,
+    maxAge: 60 * 60,
+    updateAge: 15 * 60,
   },
 
   callbacks: {
