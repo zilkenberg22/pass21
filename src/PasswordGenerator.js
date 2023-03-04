@@ -87,17 +87,12 @@ export default function PasswordGenerator() {
           </div>
           <div>Password Length (4-64)</div>
         </div>
-        <div className="">
-          <Slider
-            min={4}
-            max={64}
-            tooltip={{
-              open: true,
-            }}
-            value={configs.slideLength}
-            onChange={(e) => changeConfig("slideLength", e)}
-          />
-        </div>
+        <Slider
+          min={4}
+          max={30}
+          value={configs.slideLength}
+          onChange={(e) => changeConfig("slideLength", e)}
+        />
         <div className="md:flex items-center gap-x-5">
           <div className="flex gap-2 text-xl items-center">
             <input type="checkbox" className="w-[20px] h-[20px]" checked />

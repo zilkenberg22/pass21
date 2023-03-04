@@ -41,8 +41,8 @@ const menu = [
   },
 ];
 
-export default function Sidebar(props) {
-  const [selectedMenu, setSelectedMenu] = useState(1);
+export default function Sidebar() {
+  const [selectedMenu, setSelectedMenu] = useState(0);
 
   return (
     <div>

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useSession } from "next-auth/react";
-import { Modal, Slider } from "antd";
+import { Modal } from "antd";
 import { loginsForm_validate } from "@/lib/validate";
-import { generatePassword, openNotification } from "@/lib/tools";
+import { openNotification, showLoader } from "@/lib/tools";
 import Icon from "../../components/Icon";
+import PasswordGenerator from "../PasswordGenerator";
 
 export default function LoginsForm({ back, editData }) {
   const { data: session } = useSession();
@@ -13,8 +14,6 @@ export default function LoginsForm({ back, editData }) {
   const [formData, setFormData] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showGenerater, setShowGenerater] = useState(false);
-  const [slideLength, setSlideLength] = useState(12);
-  const [generatedPassword, setGeneratedPassword] = useState("");
 
   const formik = useFormik({
     initialValues: {
@@ -42,6 +41,7 @@ export default function LoginsForm({ back, editData }) {
   }
 
   async function newLogin(values) {
+    showLoader(true);
     try {
       values.user = session?.user?._id;
       const options = {
@@ -57,6 +57,7 @@ export default function LoginsForm({ back, editData }) {
           title: "Амжилттай",
           message: json.message,
         });
+        showLoader(false);
         back();
       } else if (json.message) {
         openNotification({
@@ -65,12 +66,15 @@ export default function LoginsForm({ back, editData }) {
           message: json.message,
         });
       }
+      showLoader(false);
     } catch (error) {
       console.log(error, "error");
+      showLoader(false);
     }
   }
 
   async function editLogin(values) {
+    showLoader(true);
     try {
       const options = {
         method: "PUT",
@@ -79,23 +83,26 @@ export default function LoginsForm({ back, editData }) {
       };
       const response = await fetch(`/api/logins/${editData._id}`, options);
       const json = await response.json();
-      if (json.message) {
-        openNotification({
-          type: "error",
-          title: "Алдаа",
-          message: json.message,
-        });
-      }
+
       if (json.status) {
         openNotification({
           type: "success",
           title: "Амжилттай",
           message: json.message,
         });
+        showLoader(false);
         back();
+      } else if (json.message) {
+        openNotification({
+          type: "error",
+          title: "Алдаа",
+          message: json.message,
+        });
       }
+      showLoader(false);
     } catch (error) {
       console.log(error, "error");
+      showLoader(false);
     }
   }
 
@@ -103,17 +110,6 @@ export default function LoginsForm({ back, editData }) {
     setEdit(false);
     setFormData({});
     back();
-  }
-
-  function generateNewPassword(e) {
-    let length = e ? e : slideLength;
-    var password = generatePassword(length);
-    setGeneratedPassword(password);
-  }
-
-  function changePassword() {
-    formik.values.password = generatedPassword;
-    setShowGenerater(false);
   }
 
   return (
@@ -245,10 +241,7 @@ export default function LoginsForm({ back, editData }) {
                     type="checkbox"
                     className="w-[16px] h-[16px]"
                     checked={showGenerater}
-                    onChange={() => {
-                      generateNewPassword();
-                      setShowGenerater(true);
-                    }}
+                    onChange={() => setShowGenerater(true)}
                   />
                   <span>Generate Password</span>
                 </div>
@@ -325,43 +318,11 @@ export default function LoginsForm({ back, editData }) {
         open={showGenerater}
         closable={false}
         centered
-        okText="Change Password"
-        onOk={changePassword}
         onCancel={() => setShowGenerater(false)}
-        okButtonProps={() => <button>ok</button>}
+        footer={[]}
+        zIndex={10}
       >
-        <div className="w-full">
-          <h2 className="font-semibold text-xl md:text-3xl flex justify-center mb-10">
-            Create strong password
-          </h2>
-          <div className="md:flex w-full items-center gap-5 bg-green-300 ">
-            <div className="flex px-2 w-full">
-              <div className="border-none focus:outline-none w-full md:w-4/5 py-6 text-4xl text-white tracking-wider bg-green-300">
-                {generatedPassword}
-              </div>
-              <button onClick={() => generateNewPassword()}>
-                <Icon icon="mdi:refresh" className="text-5xl text-white" />
-              </button>
-            </div>
-            <div className="w-full md:w-fit flex justify-center">
-              <button
-                className="bg-yellow-500 text-white p-2 px-4 text-xl"
-                onClick={() => navigator.clipboard.writeText(generatedPassword)}
-              >
-                Copy Password
-              </button>
-            </div>
-          </div>
-          <Slider
-            min={12}
-            max={20}
-            value={slideLength}
-            onChange={(e) => {
-              setSlideLength(e);
-              generateNewPassword(e);
-            }}
-          />
-        </div>
+        <PasswordGenerator />
       </Modal>
     </div>
   );

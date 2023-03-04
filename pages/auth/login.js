@@ -34,8 +34,15 @@ export default function Login() {
           title: "Амжилттай нэвтэрлээ",
         });
         showLoader(false);
-        router.push("/logins");
+        router.push("/favorites");
+      } else {
+        openNotification({
+          type: "error",
+          title: "Алдаа",
+          message: status.error,
+        });
       }
+      showLoader(false);
     } catch (error) {
       console.log(error, "error");
       showLoader(false);

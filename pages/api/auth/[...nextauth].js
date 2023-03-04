@@ -10,12 +10,12 @@ export default NextAuth({
       name: "Credentials",
       async authorize(credentials, req) {
         connectMongo().catch((error) => {
-          error: "Connection Failed...!";
+          error: "Өгөгдлийн сантай холбогдож чадахгүй байна!";
         });
 
         const result = await Users.findOne({ email: credentials.email });
         if (!result) {
-          throw new Error("No user Found with Email Please Sign Up...!");
+          throw new Error("Э-мэйл хаяг бүртгэгдээгүй байна. Та бүртгүүлнэ үү");
         }
 
         var decryptedData = decrypt(result.password);
@@ -23,7 +23,7 @@ export default NextAuth({
         const checkPassword = decryptedData === credentials.password;
 
         if (!checkPassword || result.email !== credentials.email) {
-          throw new Error("Username or Password doesn't match");
+          throw new Error("Э-мэйл хаяг эсвэл нууц үг буруу байна!");
         }
 
         return result;
@@ -33,16 +33,18 @@ export default NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
+    maxAge: 60 * 60,
+    updateAge: 15 * 60,
   },
 
   callbacks: {
-    async session({ session, token }) {
-      session.user = token.user;
-      return session;
-    },
     async jwt({ token, user }) {
       user && (token.user = user);
       return token;
+    },
+    async session({ session, token }) {
+      session.user = token.user;
+      return session;
     },
   },
 });

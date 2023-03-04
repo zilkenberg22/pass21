@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import { useSession } from "next-auth/react";
 import { register_validate } from "@/lib/validate";
-import { openNotification } from "@/lib/tools";
+import { openNotification, showLoader } from "@/lib/tools";
 
 export default function Register() {
   const router = useRouter();
@@ -30,6 +30,7 @@ export default function Register() {
   });
 
   async function onSubmit(values) {
+    showLoader(true);
     try {
       const options = {
         method: "POST",
@@ -45,6 +46,7 @@ export default function Register() {
           title: "Амжилттай",
           message: json.message,
         });
+        showLoader(false);
         router.push("/auth/login");
       } else if (json.message) {
         openNotification({
@@ -53,8 +55,10 @@ export default function Register() {
           message: json.message,
         });
       }
+      showLoader(false);
     } catch (error) {
       console.log(error, "error");
+      showLoader(false);
     }
   }
 
