@@ -137,11 +137,13 @@ export default function LoginsPage() {
                 </div>
                 <div className="flex w-full justify-between">
                   <span>{x.username}</span>
-                  <button
-                    onClick={(e) => navigator.clipboard.writeText(x.username)}
-                  >
-                    <Icon icon="mdi:content-copy" className="text-xl" />
-                  </button>
+                  {x.username && (
+                    <button
+                      onClick={(e) => navigator.clipboard.writeText(x.username)}
+                    >
+                      <Icon icon="mdi:content-copy" className="text-xl" />
+                    </button>
+                  )}
                 </div>
                 <div className="flex w-full justify-between">
                   <span>
