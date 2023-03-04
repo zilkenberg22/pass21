@@ -1,7 +1,7 @@
 import React, { useState } from "react";
+import { Drawer } from "antd";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
-import { Drawer } from "antd";
 import Sidebar from "./Sidebar";
 import Icon from "./Icon";
 
@@ -39,8 +39,8 @@ export default function Navbar() {
           <Icon icon="mdi:menu" className="text-xl" />
         </button>
       </div>
-      <Drawer placement="right" onClose={() => setOpen(false)} open={open}>
-        <Sidebar />
+      <Drawer placement="right" open={open} onClose={() => setOpen(false)}>
+        <Sidebar onClose={() => setOpen(false)} />
       </Drawer>
     </div>
   );

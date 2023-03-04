@@ -5,7 +5,7 @@ export default function PagesHeader({ title }) {
 
   return (
     <div className="md:flex md:justify-between items-center mb-10">
-      <div className="text-lg font-semibold">{title}</div>
+      <div className="text-lg font-semibold mb-4 md:mb-0">{title}</div>
       <input
         type="text"
         placeholder="Search for username and website"

@@ -64,7 +64,7 @@ function Sidebar(props) {
       </div>
       <div className="p-4">
         {menu.map((x, i) => (
-          <Link href={x.href} key={`${i}side`}>
+          <Link href={x.href} key={`${i}side`} onClick={() => props.onClose()}>
             <div
               key={i}
               className={`flex py-2 px-4 justify-between rounded-lg mb-2 ${

@@ -4,6 +4,7 @@ import { openNotification, showLoader } from "@/lib/tools";
 import LoginsForm from "@/src/logins/LoginsForm";
 import PlusButton from "@/components/PlusButton";
 import Icon from "@/components/Icon";
+import PagesHeader from "@/components/PagesHeader";
 
 export default function LoginsPage() {
   const { data: session } = useSession();
@@ -112,17 +113,7 @@ export default function LoginsPage() {
     <div>
       {!showForm ? (
         <>
-          <div className="md:flex md:justify-between items-center mb-6">
-            <div>
-              <div className="text-lg font-semibold">Logins</div>
-              <div className="text-gray-500">2 websites / apps</div>
-            </div>
-            <input
-              type="text"
-              placeholder="Search for username and website"
-              className="w-full py-4 px-6 border rounded-xl bg-slate-50 focus:outline-none mt-4 md:w-3/5"
-            />
-          </div>
+          <PagesHeader title="Logins" />
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {loginsData.map((x, i) => (
               <div className="border rounded-lg p-2 grid gap-3" key={i}>
