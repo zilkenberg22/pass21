@@ -1,6 +1,9 @@
+import Tokens from "csrf";
 import connectMongo from "@/lib/dbConnect";
 import { decrypt, encrypt } from "@/lib/tools";
 import Logins from "@/models/LoginsModel";
+
+const tokens = new Tokens();
 
 export default async function handler(req, res) {
   connectMongo().catch((error) => res.json({ error: "Connection Failed...!" }));
@@ -22,6 +25,12 @@ export default async function handler(req, res) {
       break;
     case "PUT":
       try {
+        const csrfToken = req.headers["x-csrf-token"];
+
+        if (!tokens.verify(process.env.NEXTAUTH_SECRET, csrfToken)) {
+          return res.status(403).json({ message: "Invalid CSRF token" });
+        }
+
         const { ...other } = req.body;
         other.password = encrypt(other.password);
         const newForm = {

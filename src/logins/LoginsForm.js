@@ -14,6 +14,7 @@ export default function LoginsForm({ back, editData }) {
   const [formData, setFormData] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showGenerater, setShowGenerater] = useState(false);
+  const [csrfToken, setCsrfToken] = useState("");
 
   const formik = useFormik({
     initialValues: {
@@ -28,6 +29,15 @@ export default function LoginsForm({ back, editData }) {
     validate: loginsForm_validate,
     onSubmit,
   });
+
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetch("/api/auth/csrf");
+      const data = await res.json();
+      setCsrfToken(data.csrfToken);
+    }
+    fetchData();
+  }, []);
 
   useEffect(() => {
     if (editData !== null) {
@@ -46,7 +56,10 @@ export default function LoginsForm({ back, editData }) {
       values.user = session?.user?._id;
       const options = {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrf-token": csrfToken,
+        },
         body: JSON.stringify(values),
       };
       const response = await fetch("/api/logins", options);
@@ -78,7 +91,10 @@ export default function LoginsForm({ back, editData }) {
     try {
       const options = {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrf-token": csrfToken,
+        },
         body: JSON.stringify(values),
       };
       const response = await fetch(`/api/logins/${editData._id}`, options);
@@ -145,6 +161,7 @@ export default function LoginsForm({ back, editData }) {
           className="flex flex-col gap-3 w-full"
           onSubmit={formik.handleSubmit}
         >
+          <input type="hidden" name="_csrf" value={csrfToken} />
           <div className="md:flex w-full gap-6">
             <div className="flex flex-col gap-2 w-full md:w-1/2">
               <div className="flex justify-between">

@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { useFormik } from "formik";
+import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { register_validate } from "@/lib/validate";
 import { openNotification, showLoader } from "@/lib/tools";
@@ -14,6 +14,7 @@ export default function Register() {
     password: false,
     cpassword: false,
   });
+  const [csrfToken, setCsrfToken] = useState("");
 
   if (session) {
     router.push("/");
@@ -29,12 +30,24 @@ export default function Register() {
     onSubmit,
   });
 
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetch("/api/auth/csrf");
+      const data = await res.json();
+      setCsrfToken(data.csrfToken);
+    }
+    fetchData();
+  }, []);
+
   async function onSubmit(values) {
     showLoader(true);
     try {
       const options = {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrf-token": csrfToken,
+        },
         body: JSON.stringify(values),
       };
 
@@ -83,6 +96,7 @@ export default function Register() {
             className="flex flex-col gap-3 w-full"
             onSubmit={formik.handleSubmit}
           >
+            <input type="hidden" name="_csrf" value={csrfToken} />
             <div className="flex flex-col gap-2">
               <div className="flex justify-between">
                 <label className="font-medium">Email</label>

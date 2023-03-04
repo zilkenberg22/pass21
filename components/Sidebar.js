@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Icon from "./Icon";
 
@@ -41,8 +41,24 @@ const menu = [
   },
 ];
 
-export default function Sidebar() {
+function Sidebar(props) {
   const [selectedMenu, setSelectedMenu] = useState(0);
+
+  console.log(props, "first");
+
+  useEffect(() => {
+    async function getCount() {
+      const options = {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      };
+
+      const response = await fetch("/api/getCount", options);
+      const json = await response.json();
+      console.log(json, "json");
+    }
+    getCount();
+  }, []);
 
   return (
     <div>
@@ -71,3 +87,5 @@ export default function Sidebar() {
     </div>
   );
 }
+
+export default Sidebar;
