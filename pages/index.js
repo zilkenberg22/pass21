@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 import Icon from "@/components/Icon";
 import PasswordGenerator from "@/src/PasswordGenerator";
 
@@ -14,6 +16,12 @@ const sectionStyle = {
 export default function Home() {
   const [selectedMenu, setSelectedMenu] = useState(0);
   const [maxHeight, setMaxHeight] = useState(0);
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (session) router.push("/favorites");
+  }, []);
 
   useEffect(() => {
     let navbar;

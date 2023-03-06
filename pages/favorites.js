@@ -8,9 +8,9 @@ export default function Favorites() {
   const router = useRouter();
   const { data: session } = useSession();
 
-  // useEffect(() => {
-  //   if (!session) router.push("/");
-  // }, []);
+  useEffect(() => {
+    if (!session) router.push("/");
+  }, []);
 
   return (
     <div>
