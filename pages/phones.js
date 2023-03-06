@@ -1,12 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import withAuth from "@/middleware/auth";
 import PagesHeader from "@/components/PagesHeader";
+import EmptyData from "@/components/EmptyData";
 
 export default function Phones() {
   const router = useRouter();
   const { data: session } = useSession();
+  const [dataList, setDataList] = useState([]);
 
   useEffect(() => {
     if (!session) router.push("/");
@@ -15,7 +17,7 @@ export default function Phones() {
   return (
     <div>
       <PagesHeader title="Phones" />
-      <div>asd</div>
+      {dataList.length === 0 ? <EmptyData /> : <div>asd</div>}
     </div>
   );
 }
