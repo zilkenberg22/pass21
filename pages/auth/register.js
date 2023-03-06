@@ -32,7 +32,7 @@ export default function Register() {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch("/api/auth/csrf");
+      const res = await fetch("/api/csrf");
       const data = await res.json();
       setCsrfToken(data.csrfToken);
     }
